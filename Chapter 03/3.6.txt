@@ -1,0 +1,29 @@
+package main
+
+import (
+    "fmt"
+)
+
+// CustomError is a custom error type that implements the error interface.
+type CustomError struct {
+    Code    int
+    Message string
+}
+
+// Error implements the error interface.
+func (e *CustomError) Error() string {
+    return fmt.Sprintf("Code: %d, Message: %s", e.Code, e.Message)
+}
+
+// Function that may return a custom error
+func doSomething() error {
+    // An error condition
+    return &CustomError{Code: 404, Message: "Resource not found"}
+}
+
+func main() {
+    err := doSomething()
+    if err != nil {
+        fmt.Println("Error:", err)
+    }
+}

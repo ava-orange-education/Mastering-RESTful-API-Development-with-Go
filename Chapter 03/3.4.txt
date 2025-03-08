@@ -1,0 +1,22 @@
+package main
+
+import (
+    "errors"
+    "fmt"
+)
+
+func divide(dividend, divisor float64) (float64, error) {
+    if divisor == 0.0 {
+        return 0.0, errors.New("division by zero")
+    }
+    return dividend / divisor, nil
+}
+
+func main() {
+    result, err := divide(10.0, 0.0)
+    if err != nil {
+        fmt.Println("Error:", err)
+        return
+    }
+    fmt.Println("Result:", result)
+}

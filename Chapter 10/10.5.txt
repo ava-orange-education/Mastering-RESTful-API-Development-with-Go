@@ -1,0 +1,50 @@
+package main
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/gorilla/websocket"
+)
+
+// Upgrader upgrades an HTTP connection to a WebSocket connection
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true // Adjust this for production (e.g., validate the origin)
+	},
+}
+
+func handleWebSocket(w http.ResponseWriter, r *http.Request) {
+	// Upgrade the connection
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		fmt.Println("Failed to upgrade connection:", err)
+		return
+	}
+	defer conn.Close()
+
+	fmt.Println("WebSocket connection established")
+
+	// Message handling loop
+	for {
+		messageType, message, err := conn.ReadMessage()
+		if err != nil {
+			fmt.Println("Error reading message:", err)
+			break
+		}
+
+		fmt.Printf("Received: %s\n", string(message))
+
+		// Echo the message back to the client
+		if err := conn.WriteMessage(messageType, message); err != nil {
+			fmt.Println("Error writing message:", err)
+			break
+		}
+	}
+}
+
+func main() {
+	http.HandleFunc("/ws", handleWebSocket)
+	fmt.Println("WebSocket server started at ws://localhost:8080/ws")
+	http.ListenAndServe(":8080", nil)
+}

@@ -1,0 +1,21 @@
+package main
+
+import (
+    "fmt"
+    "net/http"
+    "github.com/gorilla/mux"
+)
+
+func main() {
+    r := mux.NewRouter()
+
+    // Define route with path variable
+    r.HandleFunc("/users/{userID}", func(w http.ResponseWriter, r *http.Request) {
+        vars := mux.Vars(r)
+        userID := vars["userID"]
+        fmt.Fprintf(w, "User ID: %s", userID)
+    })
+
+    http.ListenAndServe(":8080", r)
+}
+

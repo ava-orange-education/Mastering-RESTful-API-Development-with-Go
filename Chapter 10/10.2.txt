@@ -1,0 +1,19 @@
+func downloadFileHandler(w http.ResponseWriter, r *http.Request) {
+    // Path to the file to be downloaded
+    filePath := "./uploads/example.txt"
+     file, err := os.Open(filePath)
+    if err != nil {
+        http.Error(w, "File not found", http.StatusNotFound)
+        return
+    }
+    defer file.Close()
+
+     w.Header().Set("Content-Disposition", "attachment; filename=example.txt")
+    w.Header().Set("Content-Type", "application/octet-stream")
+
+    // Stream the file content to the response writer
+    _, err = io.Copy(w, file)
+    if err != nil {
+        http.Error(w, "Error while sending file", http.StatusInternalServerError)
+        return
+    }
